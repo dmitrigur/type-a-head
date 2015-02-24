@@ -14,9 +14,6 @@
 			padding:"padding"
 		};
 		horecaTechTypeAhead.options = {
-			prevValue:null,
-			prevValueID:"",
-			
 			Container : 'body',
 			MaxLines:10,
 			FixedWidth:false,
@@ -148,6 +145,8 @@
 		if (opt.prepareParams!=null) 
 			horecaTechTypeAhead.dataOpt[targetID].prepareParams=opt.prepareParams;
 		horecaTechTypeAhead.dataOpt[targetID].scrollbarwidth=(horecaTechTypeAhead.dataOpt[targetID].scrollbarwidth==null)?scrollbarWidth():horecaTechTypeAhead.dataOpt[targetID].scrollbarwidth;
+		horecaTechTypeAhead.dataOpt[targetID].prevValue=null;
+		horecaTechTypeAhead.dataOpt[targetID].prevValueID="";
 		this.off("click.httypeahead keyup.httypeahead");
 		this.on("click.httypeahead keyup.httypeahead",function(e) {
 			function build(value,valueID,targetID) {

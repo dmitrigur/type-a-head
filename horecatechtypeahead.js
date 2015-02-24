@@ -64,7 +64,7 @@
 				}
 			},
 /*			prepareParams: function(value,func,arg,requestFunc,requestParams) {
-				// DO SOMETHING THIS PARAMS including query assignment
+				// DO SOMETHING WITH PARAMS including query assignment
 				requestFunc(value,requestParams,func,arg)
 			},*/
 //			backgroundTarget:,

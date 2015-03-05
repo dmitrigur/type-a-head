@@ -1,3 +1,5 @@
+// Dmitriy Guryanov
+
 (function ($) {
 	var horecaTechTypeAhead={};
 		horecaTechTypeAhead.dataOpt={};
@@ -176,8 +178,8 @@
 					horecaTechTypeAhead.data[targetID].prevValue=value;
 					horecaTechTypeAhead.data[targetID].prevValueID=valueID;
 					horecaTechTypeAhead.data[targetID].Source[valueID].built=true;
-					var SourceValKey=(horecaTechTypeAhead.data[targetID].Source[valueID].ValKey==null)?horecaTechTypeAhead.data[targetID].SourceValKey:horecaTechTypeAhead.data[targetID].Source[valueID].ValKey,
-						Array=[];
+					var SourceValKey=(horecaTechTypeAhead.data[targetID].Source[valueID].ValKey==null)?horecaTechTypeAhead.data[targetID].SourceValKey:horecaTechTypeAhead.data[targetID].Source[valueID].ValKey;
+					horecaTechTypeAhead.data[targetID].Array=[];
 					horecaTechTypeAhead.data[targetID].SourceSortKey_=(horecaTechTypeAhead.data[targetID].Source[valueID].SortKey!=null)?horecaTechTypeAhead.data[targetID].Source[valueID].SortKey:(horecaTechTypeAhead.data[targetID].SourceSortKey!=null)?horecaTechTypeAhead.data[targetID].SourceSortKey:SourceValKey;
 					horecaTechTypeAhead.data[targetID].SourceIdKey_=(horecaTechTypeAhead.data[targetID].Source[valueID].IdKey==null)?horecaTechTypeAhead.data[targetID].SourceIdKey:horecaTechTypeAhead.data[targetID].Source[valueID].IdKey;
 					horecaTechTypeAhead.data[targetID].SourcePutKey_=(horecaTechTypeAhead.data[targetID].Source[valueID].PutKey!=null)?horecaTechTypeAhead.data[targetID].Source[valueID].PutKey:(horecaTechTypeAhead.data[targetID].SourcePutKey!=null)?horecaTechTypeAhead.data[targetID].SourcePutKey:SourceValKey;
@@ -192,12 +194,12 @@
 							for (a in horecaTechTypeAhead.data[targetID].Source[valueID].Array) {
 								var index=horecaTechTypeAhead.data[targetID].Source[valueID].Array[a].toLowerCase().indexOf(value.toLowerCase());
 								if (index>-1)
-									Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],index:index});
+									horecaTechTypeAhead.data[targetID].Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],index:index});
 							};
-							Array.sort(sort_func_index);
+							horecaTechTypeAhead.data[targetID].Array.sort(sort_func_index);
 						} else
 							for (a in horecaTechTypeAhead.data[targetID].Source[valueID].Array)
-								Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],index:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a].toLowerCase().indexOf(value.toLowerCase())});
+								horecaTechTypeAhead.data[targetID].Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a],index:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a].toLowerCase().indexOf(value.toLowerCase())});
 					} else {
 						if (!horecaTechTypeAhead.data[targetID].Source[valueID].Sorted) {
 							horecaTechTypeAhead.data[targetID].Source[valueID].Array.sort(sort_func)
@@ -207,14 +209,14 @@
 							for (a in horecaTechTypeAhead.data[targetID].Source[valueID].Array) {
 								var index=horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey].toLowerCase().indexOf(value.toLowerCase());
 								if (index>-1)
-									Array.push({sort:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceSortKey_],value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceIdKey_],index:index});
+									horecaTechTypeAhead.data[targetID].Array.push({sort:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceSortKey_],value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceIdKey_],index:index});
 							};
-							Array.sort(sort_func_index_sort);
+							horecaTechTypeAhead.data[targetID].Array.sort(sort_func_index_sort);
 						} else
 							for (a in horecaTechTypeAhead.data[targetID].Source[valueID].Array)
-								Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceIdKey_],index:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey].toLowerCase().indexOf(value.toLowerCase())});
+								horecaTechTypeAhead.data[targetID].Array.push({value:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey],id:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][horecaTechTypeAhead.data[targetID].SourceIdKey_],index:horecaTechTypeAhead.data[targetID].Source[valueID].Array[a][SourceValKey].toLowerCase().indexOf(value.toLowerCase())});
 					};
-					if (Array.length==0) {
+					if (horecaTechTypeAhead.data[targetID].Array.length==0) {
 						$("#httypeahead_frame_"+targetID).css("display","none");
 						$("#httypeahead_container_"+targetID).empty();
 						if (horecaTechTypeAhead.data[targetID].Docking) {
@@ -223,8 +225,8 @@
 						};
 					} else {
 						var str="";
-						for (var a in Array)
-							str+="<p key=\""+valueID+"\" tg=\""+targetID+"\" indx=\""+a+"\" id=\"httypeahead_element_"+targetID+a+"\" class=\"httypeahead_element_class_"+targetID+"\">"+((Array[a].index<0 || !horecaTechTypeAhead.data[targetID].Accentuation)?Array[a].value:(Array[a].value.substr(0,Array[a].index)+"<span style=\"COLOR:"+horecaTechTypeAhead.data[targetID].AccentuationColor+"\">"+Array[a].value.substr(Array[a].index,value.length)+"</span>"+Array[a].value.substr(Array[a].index+value.length,Array[a].value.length-Array[a].index-value.length)))+"</p>";
+						for (var a in horecaTechTypeAhead.data[targetID].Array)
+							str+="<p key=\""+valueID+"\" tg=\""+targetID+"\" indx=\""+a+"\" id=\"httypeahead_element_"+targetID+a+"\" class=\"httypeahead_element_class_"+targetID+"\">"+((horecaTechTypeAhead.data[targetID].Array[a].index<0 || !horecaTechTypeAhead.data[targetID].Accentuation)?horecaTechTypeAhead.data[targetID].Array[a].value:(horecaTechTypeAhead.data[targetID].Array[a].value.substr(0,horecaTechTypeAhead.data[targetID].Array[a].index)+"<span style=\"COLOR:"+horecaTechTypeAhead.data[targetID].AccentuationColor+"\">"+horecaTechTypeAhead.data[targetID].Array[a].value.substr(horecaTechTypeAhead.data[targetID].Array[a].index,value.length)+"</span>"+horecaTechTypeAhead.data[targetID].Array[a].value.substr(horecaTechTypeAhead.data[targetID].Array[a].index+value.length,horecaTechTypeAhead.data[targetID].Array[a].value.length-horecaTechTypeAhead.data[targetID].Array[a].index-value.length)))+"</p>";
 						$("#httypeahead_container_"+targetID).html(str);
 						var	scr_height=$(window).height(),
 							scr_width=$(window).width();
@@ -281,7 +283,7 @@
 							$(this).css({backgroundColor:horecaTechTypeAhead.data[targetID].SelectedBackGroundColor,color:horecaTechTypeAhead.data[targetID].SelectedColor,textShadow:horecaTechTypeAhead.data[targetID].SelectedTextShadow});
 						});
 						$(".httypeahead_element_class_"+targetID).on("mousedown.httypeahead ",function(e) {
-							$(document).off("change.httypeahead click.httypeahead");
+							$(document).off("change.httypeahead click.httypeahead scroll.httypeahead");
 							e.stopPropagation();
 							var targetID=$(this).attr("tg"),
 								index=$(this).attr("indx"),
@@ -294,7 +296,7 @@
 							if (horecaTechTypeAhead.data[targetID].SourcePutKey_!=null && horecaTechTypeAhead.data[targetID].SourcePutKey_!="")
 								$("#"+targetID).val((horecaTechTypeAhead.data[targetID].SourceType_=="A")?horecaTechTypeAhead.data[targetID].Source[valueID].Array[index]:horecaTechTypeAhead.data[targetID].Source[valueID].Array[index][horecaTechTypeAhead.data[targetID].SourcePutKey_]);
 							if (horecaTechTypeAhead.data[targetID].onClose!=null && typeof(horecaTechTypeAhead.data[targetID].onClose)=='function')
-								horecaTechTypeAhead.data[targetID].onClose(targetID,horecaTechTypeAhead.data[targetID].Source[valueID].Array[index],horecaTechTypeAhead.data[targetID].SourceType_,horecaTechTypeAhead.data[targetID].SourceIdKey_,horecaTechTypeAhead.data[targetID].SourcePutKey_);
+								horecaTechTypeAhead.data[targetID].onClose(horecaTechTypeAhead.data[targetID].target,horecaTechTypeAhead.data[targetID].Array[index],horecaTechTypeAhead.data[targetID].SourceType_,horecaTechTypeAhead.data[targetID].SourceIdKey_,horecaTechTypeAhead.data[targetID].SourcePutKey_);
 							delete horecaTechTypeAhead.data[targetID];
 						});
 					}
@@ -317,10 +319,11 @@
 					delete horecaTechTypeAhead.data[targetID];
 				});
 				horecaTechTypeAhead.data[targetID]=$.extend(true,{},horecaTechTypeAhead.dataOpt[targetID]);
+				horecaTechTypeAhead.data[targetID].target=this;
 				horecaTechTypeAhead.data[targetID].getSourceObject=horecaTechTypeAhead.dataOpt[targetID].getSourceObject;
 				horecaTechTypeAhead.data[targetID].prepareParams=horecaTechTypeAhead.dataOpt[targetID].prepareParams;
 				$((horecaTechTypeAhead.data[targetID].Container=='body')?horecaTechTypeAhead.data[targetID].Container:("#"+horecaTechTypeAhead.data[targetID].Container)).append('<div id="httypeahead_frame_'+targetID+'" tg="'+targetID+'" class="httypeahead httypeahead_frame_class_'+targetID+'"><div id="httypeahead_container_'+targetID+'" wrap="soft" class="httypeahead_container_class_'+targetID+'"></div></div>');
-				$("#httypeahead_frame_"+targetID).append("<style>.httypeahead_frame_class_"+targetID+"{z-index:20;width:auto;height:auto;position:absolute;display:block;overflow-y:auto;overflow-x:hidden} .httypeahead_container_class_"+targetID+"{background-color:transparent;width:auto;height:auto;top:0;left:0;position:absolute;display:block;overflow:hidden}</style>");
+				$("#httypeahead_frame_"+targetID).append("<style>.httypeahead_frame_class_"+targetID+"{z-index:20;width:auto;height:auto;position:fixed;display:block;overflow-y:auto;overflow-x:hidden} .httypeahead_container_class_"+targetID+"{background-color:transparent;width:auto;height:auto;top:0;left:0;position:absolute;display:block;overflow:hidden}</style>");
 				horecaTechTypeAhead.data[targetID].target=this;
 				horecaTechTypeAhead.data[targetID].attr={};
 				for (attr in this.attributes)
@@ -360,9 +363,9 @@
 					$("#httypeahead_frame_"+targetID).append("<style id=\"httypeahead_style"+targetID+"\">"+stylehtml+"</style>");
 				else 
 					$("#httypeahead_style"+targetID).html(stylehtml);
-				$(document).off("change.httypeahead click.httypeahead");
-				$(document).on("change.httypeahead click.httypeahead",function() {
-					$(document).off("change.httypeahead click.httypeahead");
+				$(document).off("change.httypeahead click.httypeahead scroll.httypeahead");
+				$(document).on("change.httypeahead click.httypeahead scroll.httypeahead",function() {
+					$(document).off("change.httypeahead click.httypeahead scroll.httypeahead");
 					$(".httypeahead").each(function() {
 						var targetID=$(this).attr("tg");
 						$("#httypeahead_frame_"+targetID).remove();
@@ -379,14 +382,16 @@
 				});
 			};
 			var value=$(this).val();
-			if (horecaTechTypeAhead.data[targetID].Source[value]==null) {
-				horecaTechTypeAhead.data[targetID].getSourceObject(value,function(result,value,valueID,arg) {
-					horecaTechTypeAhead.data[arg.id].Source[valueID]=result;
-					build(value,valueID,arg.id);
-				},horecaTechTypeAhead.data[targetID].attr);
-				build(value,null,targetID);
-			} else 
-				build(value,value,targetID);
+			if (horecaTechTypeAhead.data[targetID]!=null) {
+				if (horecaTechTypeAhead.data[targetID].Source[value]==null) {
+					horecaTechTypeAhead.data[targetID].getSourceObject(value,function(result,value,valueID,arg) {
+						horecaTechTypeAhead.data[arg.id].Source[valueID]=result;
+						build(value,valueID,arg.id);
+					},horecaTechTypeAhead.data[targetID].attr);
+					build(value,null,targetID);
+				} else 
+					build(value,value,targetID);
+			}
 		});
 	};	
 }(jQuery));

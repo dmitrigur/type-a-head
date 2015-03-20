@@ -2,9 +2,10 @@
 
 (function ($) {
 	var horecaTechTypeAhead={};
-		horecaTechTypeAhead.dataOpt={};
-		horecaTechTypeAhead.data={};
-		horecaTechTypeAhead.cssAttrArray={
+	horecaTechTypeAhead.counter=0;
+	horecaTechTypeAhead.dataOpt={};
+	horecaTechTypeAhead.data={};
+	horecaTechTypeAhead.cssAttrArray={
 			background:"background",
 			boxShadow:"box-shadow",
 			color:"color",
@@ -14,8 +15,8 @@
 			textShadow:"text-shadow",
 			lineHeight:"line-height",
 			padding:"padding"
-		};
-		horecaTechTypeAhead.options = {
+	};
+	horecaTechTypeAhead.options = {
 			Container : 'body',
 			MaxLines:10,
 			FixedWidth:false,
@@ -30,41 +31,41 @@
 			URL:"",
 			Params:{},
 			ValueToken:"query",
-			getSourceObject:function(value,func,arg) { // default API oriented function
-				if (horecaTechTypeAhead.data[arg.id].URL!="") {
-					function request(value,params,func,arg) {
-						$.getJSON(horecaTechTypeAhead.data[arg.id].URL +'?callback=?',
+			getSourceObject:function(value,func,attr) { // default API oriented function
+				if (horecaTechTypeAhead.data[attr.typeaheadid].URL!="") {
+					function request(value,params,func,attr) {
+						$.getJSON(horecaTechTypeAhead.data[attr.typeaheadid].URL +'?callback=?',
 							params,
 							function(data) {
-								if (horecaTechTypeAhead.data[arg.id].ResultSuffix!=null) {
-									var result=data[horecaTechTypeAhead.data[arg.id].ResultSuffix];
+								if (horecaTechTypeAhead.data[attr.typeaheadid].ResultSuffix!=null) {
+									var result=data[horecaTechTypeAhead.data[attr.typeaheadid].ResultSuffix];
 								}  else {
 									var result=data;
 								}
 								var A=[];
 								for (i in result)
 									A.push(result[i])
-								func({Array:A,Sorted:true},value,value,arg);
+								func({Array:A,Sorted:true},value,value,attr);
 							}
 						);
 					};
-					if (horecaTechTypeAhead.data[arg.id].prepareParams!=null && typeof(horecaTechTypeAhead.data[arg.id].prepareParams)=='function')
-						horecaTechTypeAhead.data[arg.id].prepareParams(
+					if (horecaTechTypeAhead.data[attr.typeaheadid].prepareParams!=null && typeof(horecaTechTypeAhead.data[attr.typeaheadid].prepareParams)=='function')
+						horecaTechTypeAhead.data[attr.typeaheadid].prepareParams(
 							value,
 							func,
-							arg, 
+							attr, 
 							request,
-							horecaTechTypeAhead.data[arg.id].Params
+							horecaTechTypeAhead.data[attr.typeaheadid].Params
 						)
 					else {
-						horecaTechTypeAhead.data[arg.id].Params[horecaTechTypeAhead.data[arg.id].ValueToken]=value;
-						request(value,horecaTechTypeAhead.data[arg.id].Params,func,arg)
+						horecaTechTypeAhead.data[attr.typeaheadid].Params[horecaTechTypeAhead.data[attr.typeaheadid].ValueToken]=value;
+						request(value,horecaTechTypeAhead.data[attr.typeaheadid].Params,func,attr)
 					}
 				}
 			},
-/*			prepareParams: function(value,func,arg,requestFunc,requestParams) {
+/*			prepareParams: function(value,func,attr,requestFunc,requestParams) {
 				// DO SOMETHING WITH PARAMS including query assignment
-				requestFunc(value,requestParams,func,arg)
+				requestFunc(value,requestParams,func,attr)
 			},*/
 //			backgroundTarget:,
 //			colorTarget:,
@@ -79,8 +80,8 @@
 //			AccentuationColor: "red",
 //			SelectedAccentuationColor: "red",
 //			LinesSeparatorColor: "grey",
-		};
-	function colorParse (color) {
+	};
+	horecaTechTypeAhead.colorParse = function (color) {
 		x0=color.indexOf("(");
 		x1=color.indexOf(",",x0+1);
 		x2=color.indexOf(",",x1+1);
@@ -98,7 +99,7 @@
 		}
 		return {r:r,g:g,b:b,a:a};
 	};
-	function rgbToHsl(c){
+	horecaTechTypeAhead.rgbToHsl = function(c){
 		c.r/=255,c.g/=255,c.b/=255;
 		var max=Math.max(c.r,c.g,c.b),min=Math.min(c.r,c.g,c.b);
 		var h,s,l=(c.r+c.g+c.b)/0.03;
@@ -132,7 +133,10 @@
 			$(div).remove();
 			return (w1 - w2);
 		};
-		var targetID=$(this).attr("id");
+		if ($(this).attr("typeaheadid")==null) {
+			$(this).attr("typeaheadid",horecaTechTypeAhead.counter++);
+		};
+		var targetID=$(this).attr("typeaheadid");
 	// первоначальная копия дефолтных значений в создаваемый шаблон
 		if (horecaTechTypeAhead.dataOpt[targetID]==null) {
 			horecaTechTypeAhead.dataOpt[targetID]=$.extend(true,{},horecaTechTypeAhead.options);
@@ -220,8 +224,8 @@
 						$("#httypeahead_frame_"+targetID).css("display","none");
 						$("#httypeahead_container_"+targetID).empty();
 						if (horecaTechTypeAhead.data[targetID].Docking) {
-							$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
-							$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
+							$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
+							$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
 						};
 					} else {
 						var str="";
@@ -267,13 +271,13 @@
 							$("#httypeahead_frame_"+targetID).css({top:horecaTechTypeAhead.data[targetID].coord.bottom});
 							if(horecaTechTypeAhead.data[targetID].Docking) {
 								$("#httypeahead_frame_"+targetID).css({borderTopLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,Math.max(0,l_offset)),borderTopRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right,Math.max(0,r_offset)),borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,Math.max(0,-l_offset)),borderBottomRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right,Math.max(0,-r_offset)),borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,Math.max(0,-l_offset)),borderBottomRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right,Math.max(0,-r_offset)),borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
 							}
 						} else {
 							$("#httypeahead_frame_"+targetID).css({top:horecaTechTypeAhead.data[targetID].coord.top-content_height_to_show-border__});
 							if(horecaTechTypeAhead.data[targetID].Docking) {
 								$("#httypeahead_frame_"+targetID).css({borderBottomLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,Math.max(0,l_offset)),borderBottomRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Right,Math.max(0,r_offset)),borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,Math.max(0,-l_offset)),borderTopRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Right,Math.max(0,-r_offset)),borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,Math.max(0,-l_offset)),borderTopRightRadius:Math.min(horecaTechTypeAhead.data[targetID].borderRadius.Top.Right,Math.max(0,-r_offset)),borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
 							}
 						};
 						$(".httypeahead_element_class_"+targetID).on("mouseout.httypeahead",function(e) {
@@ -290,11 +294,11 @@
 								valueID=$(this).attr("key");
 							$("#httypeahead_frame_"+targetID).remove();
 							if (horecaTechTypeAhead.data[targetID].Docking) {
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
 							};
 							if (horecaTechTypeAhead.data[targetID].SourcePutKey_!=null && horecaTechTypeAhead.data[targetID].SourcePutKey_!="")
-								$("#"+targetID).val((horecaTechTypeAhead.data[targetID].SourceType_=="A")?horecaTechTypeAhead.data[targetID].Source[valueID].Array[index]:horecaTechTypeAhead.data[targetID].Source[valueID].Array[index][horecaTechTypeAhead.data[targetID].SourcePutKey_]);
+								$(horecaTechTypeAhead.data[targetID].target).val((horecaTechTypeAhead.data[targetID].SourceType_=="A")?horecaTechTypeAhead.data[targetID].Source[valueID].Array[index]:horecaTechTypeAhead.data[targetID].Source[valueID].Array[index][horecaTechTypeAhead.data[targetID].SourcePutKey_]);
 							if (horecaTechTypeAhead.data[targetID].onClose!=null && typeof(horecaTechTypeAhead.data[targetID].onClose)=='function')
 								horecaTechTypeAhead.data[targetID].onClose(horecaTechTypeAhead.data[targetID].target,horecaTechTypeAhead.data[targetID].Array[index],horecaTechTypeAhead.data[targetID].SourceType_,horecaTechTypeAhead.data[targetID].SourceIdKey_,horecaTechTypeAhead.data[targetID].SourcePutKey_);
 							delete horecaTechTypeAhead.data[targetID];
@@ -303,25 +307,26 @@
 				}
 			};
 			e.stopPropagation();
-			var targetID=$(this).attr("id");
+			var targetID=$(this).attr("typeaheadid");
 			if (e.type=='click' && $("#httypeahead_frame_"+targetID).length==0) {
+				horecaTechTypeAhead.data[targetID]=$.extend(true,{},horecaTechTypeAhead.dataOpt[targetID]);
+				horecaTechTypeAhead.data[targetID].target=this;
+				horecaTechTypeAhead.data[targetID].getSourceObject=horecaTechTypeAhead.dataOpt[targetID].getSourceObject;
+				horecaTechTypeAhead.data[targetID].prepareParams=horecaTechTypeAhead.dataOpt[targetID].prepareParams;
+				horecaTechTypeAhead.data[targetID].borderTarget=($(horecaTechTypeAhead.data[targetID].borderTarget).length!=0)?horecaTechTypeAhead.data[targetID].borderTarget:horecaTechTypeAhead.data[targetID].target;
 				$(".httypeahead").each(function() {
 					var targetID=$(this).attr("tg");
 					$("#httypeahead_frame_"+targetID).remove();
 					if (targetID!=null && horecaTechTypeAhead.data[targetID]!=null) {
 						if (horecaTechTypeAhead.data[targetID].Docking) {
-							$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
-							$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
+							$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
+							$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
 						};
 						if (horecaTechTypeAhead.data[targetID].onCancel!=null && typeof(horecaTechTypeAhead.data[targetID].onCancel)=='function')
 							horecaTechTypeAhead.data[targetID].onCancel(targetID);
 					};
 					delete horecaTechTypeAhead.data[targetID];
 				});
-				horecaTechTypeAhead.data[targetID]=$.extend(true,{},horecaTechTypeAhead.dataOpt[targetID]);
-				horecaTechTypeAhead.data[targetID].target=this;
-				horecaTechTypeAhead.data[targetID].getSourceObject=horecaTechTypeAhead.dataOpt[targetID].getSourceObject;
-				horecaTechTypeAhead.data[targetID].prepareParams=horecaTechTypeAhead.dataOpt[targetID].prepareParams;
 				$((horecaTechTypeAhead.data[targetID].Container=='body')?horecaTechTypeAhead.data[targetID].Container:("#"+horecaTechTypeAhead.data[targetID].Container)).append('<div id="httypeahead_frame_'+targetID+'" tg="'+targetID+'" class="httypeahead httypeahead_frame_class_'+targetID+'"><div id="httypeahead_container_'+targetID+'" wrap="soft" class="httypeahead_container_class_'+targetID+'"></div></div>');
 				$("#httypeahead_frame_"+targetID).append("<style>.httypeahead_frame_class_"+targetID+"{z-index:20;width:auto;height:auto;position:fixed;display:block;overflow-y:auto;overflow-x:hidden} .httypeahead_container_class_"+targetID+"{background-color:transparent;width:auto;height:auto;top:0;left:0;position:absolute;display:block;overflow:hidden}</style>");
 				horecaTechTypeAhead.data[targetID].target=this;
@@ -330,28 +335,27 @@
 					if (this.attributes[attr].name!=null)
 						horecaTechTypeAhead.data[targetID].attr[this.attributes[attr].name]=this.attributes[attr].value;
 				for (var css_attr in horecaTechTypeAhead.cssAttrArray)
-					horecaTechTypeAhead.data[targetID][css_attr]=(horecaTechTypeAhead.dataOpt[targetID][css_attr]==null)?$("#"+(($("#"+horecaTechTypeAhead.data[targetID][css_attr+"Target"]).length!=0)?horecaTechTypeAhead.data[targetID][css_attr+"Target"]:targetID)).css(horecaTechTypeAhead.cssAttrArray[css_attr]):horecaTechTypeAhead.dataOpt[targetID][css_attr];
+					horecaTechTypeAhead.data[targetID][css_attr]=(horecaTechTypeAhead.dataOpt[targetID][css_attr]==null)?$(($(horecaTechTypeAhead.data[targetID][css_attr+"Target"]).length!=0)?horecaTechTypeAhead.data[targetID][css_attr+"Target"]:horecaTechTypeAhead.data[targetID].target).css(horecaTechTypeAhead.cssAttrArray[css_attr]):horecaTechTypeAhead.dataOpt[targetID][css_attr];
 				horecaTechTypeAhead.data[targetID].lineHeightInt=parseInt(horecaTechTypeAhead.data[targetID].lineHeight.substr(0,horecaTechTypeAhead.data[targetID].lineHeight.length-2))+((horecaTechTypeAhead.data[targetID].LinesSeparator)?1:0);
-				horecaTechTypeAhead.data[targetID].borderTarget=($("#"+horecaTechTypeAhead.data[targetID].borderTarget).length!=0)?horecaTechTypeAhead.data[targetID].borderTarget:targetID;
 				horecaTechTypeAhead.data[targetID].borderRadius={
 					Top:{
-						Left:	parseInt($("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-left-radius").substr(0,$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-left-radius").length-2)),
-						Right:	parseInt($("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-right-radius").substr(0,$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-right-radius").length-2))
+						Left:	parseInt($(horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-left-radius").substr(0,$(horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-left-radius").length-2)),
+						Right:	parseInt($(horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-right-radius").substr(0,$(horecaTechTypeAhead.data[targetID].borderTarget).css("border-top-right-radius").length-2))
 					},
 					Bottom: {
-						Left:	parseInt($("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-left-radius").substr(0,$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-left-radius").length-2)),
-						Right:	parseInt($("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-right-radius").substr(0,$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-right-radius").length-2))
+						Left:	parseInt($(horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-left-radius").substr(0,$(horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-left-radius").length-2)),
+						Right:	parseInt($(horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-right-radius").substr(0,$(horecaTechTypeAhead.data[targetID].borderTarget).css("border-bottom-right-radius").length-2))
 					}
 				};
 				$("#httypeahead_frame_"+targetID).css({boxShadow:horecaTechTypeAhead.data[targetID].boxShadow,background:horecaTechTypeAhead.data[targetID].FrameBackground,borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right,borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right,border:horecaTechTypeAhead.data[targetID].border,font:horecaTechTypeAhead.data[targetID].font,textAlign:horecaTechTypeAhead.data[targetID].textAlign,textShadow:horecaTechTypeAhead.data[targetID].textShadow,lineHeight:horecaTechTypeAhead.data[targetID].lineHeight,color:horecaTechTypeAhead.data[targetID].color});
 				$("#httypeahead_container_"+targetID).css("background",horecaTechTypeAhead.data[targetID].background);
-				horecaTechTypeAhead.data[targetID].width=$("#"+(($("#"+horecaTechTypeAhead.data[targetID].widthTarget).length!=0)?horecaTechTypeAhead.data[targetID].widthTarget:targetID)).width();
-				horecaTechTypeAhead.data[targetID].coord=document.getElementById((horecaTechTypeAhead.data[targetID].positionTarget!=null)?horecaTechTypeAhead.data[targetID].positionTarget:targetID).getBoundingClientRect(),
+				horecaTechTypeAhead.data[targetID].width=$(($(horecaTechTypeAhead.data[targetID].widthTarget).length!=0)?horecaTechTypeAhead.data[targetID].widthTarget:horecaTechTypeAhead.data[targetID].target).width();
+				horecaTechTypeAhead.data[targetID].coord=((horecaTechTypeAhead.data[targetID].positionTarget!=null)?horecaTechTypeAhead.data[targetID].positionTarget:horecaTechTypeAhead.data[targetID].target).getBoundingClientRect(),
 				horecaTechTypeAhead.data[targetID].textShadowColor=(horecaTechTypeAhead.dataOpt[targetID].textShadowColor==null)?(horecaTechTypeAhead.data[targetID].textShadow.substr(0,horecaTechTypeAhead.data[targetID].textShadow.indexOf(")")+1)):horecaTechTypeAhead.dataOpt[targetID].textShadowColor;
-				horecaTechTypeAhead.data[targetID].backgroundColor=(horecaTechTypeAhead.dataOpt[targetID].backgroundColor==null)?$("#"+(($("#"+horecaTechTypeAhead.data[targetID]["backgroundTarget"]).length!=0)?horecaTechTypeAhead.data[targetID]["backgroundTarget"]:targetID)).css("background-color"):horecaTechTypeAhead.dataOpt[targetID].backgroundColor;
-				horecaTechTypeAhead.data[targetID].colorHSLA=rgbToHsl(colorParse(horecaTechTypeAhead.data[targetID].color));
-				horecaTechTypeAhead.data[targetID].backgroundColorHSLA=rgbToHsl(colorParse(horecaTechTypeAhead.data[targetID].backgroundColor));
-				horecaTechTypeAhead.data[targetID].textShadowColorHSLA=rgbToHsl(colorParse(horecaTechTypeAhead.data[targetID].textShadowColor));
+				horecaTechTypeAhead.data[targetID].backgroundColor=(horecaTechTypeAhead.dataOpt[targetID].backgroundColor==null)?$(($(horecaTechTypeAhead.data[targetID]["backgroundTarget"]).length!=0)?horecaTechTypeAhead.data[targetID]["backgroundTarget"]:horecaTechTypeAhead.data[targetID].target).css("background-color"):horecaTechTypeAhead.dataOpt[targetID].backgroundColor;
+				horecaTechTypeAhead.data[targetID].colorHSLA=horecaTechTypeAhead.rgbToHsl(horecaTechTypeAhead.colorParse(horecaTechTypeAhead.data[targetID].color));
+				horecaTechTypeAhead.data[targetID].backgroundColorHSLA=horecaTechTypeAhead.rgbToHsl(horecaTechTypeAhead.colorParse(horecaTechTypeAhead.data[targetID].backgroundColor));
+				horecaTechTypeAhead.data[targetID].textShadowColorHSLA=horecaTechTypeAhead.rgbToHsl(horecaTechTypeAhead.colorParse(horecaTechTypeAhead.data[targetID].textShadowColor));
 				horecaTechTypeAhead.data[targetID].LinesSeparatorColor=(horecaTechTypeAhead.dataOpt[targetID].LinesSeparatorColor==null)?"HSLA("+horecaTechTypeAhead.data[targetID].colorHSLA.h+","+horecaTechTypeAhead.data[targetID].colorHSLA.s+"%,"+horecaTechTypeAhead.data[targetID].colorHSLA.l+"%,"+(horecaTechTypeAhead.data[targetID].colorHSLA.a*0.3)+")":horecaTechTypeAhead.dataOpt[targetID].LinesSeparatorColor;
 				horecaTechTypeAhead.data[targetID].AccentuationColor=(horecaTechTypeAhead.dataOpt[targetID].AccentuationColor==null)?"HSLA("+Math.round(((horecaTechTypeAhead.data[targetID].colorHSLA.h*horecaTechTypeAhead.data[targetID].colorHSLA.s+horecaTechTypeAhead.data[targetID].backgroundColorHSLA.h*horecaTechTypeAhead.data[targetID].backgroundColorHSLA.s)/(horecaTechTypeAhead.data[targetID].backgroundColorHSLA.s+horecaTechTypeAhead.data[targetID].colorHSLA.s)+180)%360)+",100%,"+(((horecaTechTypeAhead.data[targetID].colorHSLA.l+horecaTechTypeAhead.data[targetID].backgroundColorHSLA.l)/2+Math.abs((horecaTechTypeAhead.data[targetID].colorHSLA.l+horecaTechTypeAhead.data[targetID].backgroundColorHSLA.l)/2-100))/2)+"%,"+horecaTechTypeAhead.data[targetID].colorHSLA.a+")":horecaTechTypeAhead.dataOpt[targetID].AccentuationColor;
 				horecaTechTypeAhead.data[targetID].SelectedColor=(horecaTechTypeAhead.dataOpt[targetID].SelectedColor==null)?"HSLA("+horecaTechTypeAhead.data[targetID].colorHSLA.h+","+horecaTechTypeAhead.data[targetID].colorHSLA.s+"%,"+Math.abs(horecaTechTypeAhead.data[targetID].colorHSLA.l-100)+"%,"+horecaTechTypeAhead.data[targetID].colorHSLA.a+")":horecaTechTypeAhead.dataOpt[targetID].SelectedColor;
@@ -371,8 +375,8 @@
 						$("#httypeahead_frame_"+targetID).remove();
 						if (targetID!=null && horecaTechTypeAhead.data[targetID]!=null) {
 							if (horecaTechTypeAhead.data[targetID].Docking) {
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
-								$("#"+horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderBottomLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Left,borderBottomRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Bottom.Right});
+								$(horecaTechTypeAhead.data[targetID].borderTarget).css({borderTopLeftRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Left,borderTopRightRadius:horecaTechTypeAhead.data[targetID].borderRadius.Top.Right});
 							};
 							if (horecaTechTypeAhead.data[targetID].onCancel!=null && typeof(horecaTechTypeAhead.data[targetID].onCancel)=='function')
 								horecaTechTypeAhead.data[targetID].onCancel(targetID);
@@ -384,9 +388,9 @@
 			var value=$(this).val();
 			if (horecaTechTypeAhead.data[targetID]!=null) {
 				if (horecaTechTypeAhead.data[targetID].Source[value]==null) {
-					horecaTechTypeAhead.data[targetID].getSourceObject(value,function(result,value,valueID,arg) {
-						horecaTechTypeAhead.data[arg.id].Source[valueID]=result;
-						build(value,valueID,arg.id);
+					horecaTechTypeAhead.data[targetID].getSourceObject(value,function(result,value,valueID,attr) {
+						horecaTechTypeAhead.data[attr.typeaheadid].Source[valueID]=result;
+						build(value,valueID,attr.typeaheadid);
 					},horecaTechTypeAhead.data[targetID].attr);
 					build(value,null,targetID);
 				} else 

@@ -1,4 +1,4 @@
-// Dmitriy Guryanov (c) 2015
+// Dmitriy Guryanov
 
 (function ($) {
     var horecaTechTypeAhead = {};

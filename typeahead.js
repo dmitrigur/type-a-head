@@ -163,7 +163,7 @@
     $.fn.HorecaTechTypeaheadOff = function () {
         this.off("click.httypeahead");
         this.off("keyup.httypeahead");
-		console.log('off')l
+		console.log('off')
         delete horecaTechTypeAhead.dataOpt[$(this).attr("id")];
     };
     $.fn.HorecaTechTypeahead = function (opt) {

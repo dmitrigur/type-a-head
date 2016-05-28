@@ -46,7 +46,7 @@
         paddingBottom: "padding-bottom",
         paddingLeft: "padding-left",
         paddingRight: "padding-right"
-    };
+    }; 
     horecaTechTypeAhead.options = {
         Container: 'body',
         MaxLines: 10,

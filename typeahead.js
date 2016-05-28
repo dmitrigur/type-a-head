@@ -163,6 +163,7 @@
     $.fn.HorecaTechTypeaheadOff = function () {
         this.off("click.httypeahead");
         this.off("keyup.httypeahead");
+		console.log('off')l
         delete horecaTechTypeAhead.dataOpt[$(this).attr("id")];
     };
     $.fn.HorecaTechTypeahead = function (opt) {
@@ -386,7 +387,8 @@
                                 $(horecaTechTypeAhead.data[targetID].target).val((horecaTechTypeAhead.data[targetID].SourceType_ == "A") ? horecaTechTypeAhead.data[targetID].Source[valueID].Array[index] : horecaTechTypeAhead.data[targetID].Source[valueID].Array[index][horecaTechTypeAhead.data[targetID].SourcePutKey_]);
                             if (horecaTechTypeAhead.data[targetID].onClose != null && typeof (horecaTechTypeAhead.data[targetID].onClose) == 'function')
                                 horecaTechTypeAhead.data[targetID].onClose(horecaTechTypeAhead.data[targetID].target, horecaTechTypeAhead.data[targetID].Array[index], horecaTechTypeAhead.data[targetID].SourceType_, horecaTechTypeAhead.data[targetID].SourceIdKey_, horecaTechTypeAhead.data[targetID].SourcePutKey_);
-                            delete horecaTechTypeAhead.data[targetID];
+                           console.log('md')
+						    delete horecaTechTypeAhead.data[targetID];
                         });
                     }
                 }
@@ -394,7 +396,7 @@
             ;
             e.stopPropagation();
             var targetID = $(this).attr("typeaheadid");
-            if (/*e.type=='click' &&*/ $("#httypeahead_frame_" + targetID).length == 0) {
+            if (e.type=='click' && $("#httypeahead_frame_" + targetID).length == 0) {
                 horecaTechTypeAhead.data[targetID] = $.extend(true, {}, horecaTechTypeAhead.dataOpt[targetID]);
                 horecaTechTypeAhead.data[targetID].target = this;
                 horecaTechTypeAhead.data[targetID].getSourceObject = horecaTechTypeAhead.dataOpt[targetID].getSourceObject;
@@ -411,8 +413,8 @@
                         ;
                         if (horecaTechTypeAhead.data[targetID].onCancel != null && typeof (horecaTechTypeAhead.data[targetID].onCancel) == 'function')
                             horecaTechTypeAhead.data[targetID].onCancel(targetID);
-                    }
-                    ;
+                    };
+					console.log('click');
                     delete horecaTechTypeAhead.data[targetID];
                 });
                 $((horecaTechTypeAhead.data[targetID].Container == 'body') ? horecaTechTypeAhead.data[targetID].Container : ("#" + horecaTechTypeAhead.data[targetID].Container)).append('<div id="httypeahead_frame_' + targetID + '" tg="' + targetID + '" class="httypeahead httypeahead_frame_class_' + targetID + '"><div id="httypeahead_container_' + targetID + '" wrap="soft" class="httypeahead_container_class_' + targetID + '"></div></div>');
@@ -484,6 +486,7 @@
                                 horecaTechTypeAhead.data[targetID].onCancel(targetID);
                         }
                         ;
+						console.log('cancel')
                         delete horecaTechTypeAhead.data[targetID];
                     });
                 });

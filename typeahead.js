@@ -69,73 +69,67 @@
         black: "#000000"
     }
     horecaTechTypeAhead.options = {
-        Container: 'body',
-        MaxLines: 10,
-        FixedWidth: false,
-        Docking: true,
-        Accentuation: true,
-        LinesSeparator: true,
-        FrameBackground: "rgba(0,0,0,0) none repeat scroll 0% 0% / auto padding-box border-box",
-        SourceType: "A",
-        SourceValKey: "value",
-        SourceIdKey: "id",
-        Sortable: true,
+        container: 'body',
+        maxLines: 10,
+        fixedWidth: false,
+        isDocking: true,
+        isAccentuation: true,
+        isLinesSeparator: true,
+        frameBackground: "rgba(0,0,0,0) none repeat scroll 0% 0% / auto padding-box border-box",
+        sourceType: "A",
+        sourceValKey: "value",
+        sourceIdKey: "id",
+        isSortable: true,
         emptyField: false,
+        noNew: true,
         Source: {},
         URL: false,
         JSONP: true,
-        Params: {},
-        QueryParamName: "query",
-        getSourceObject: function (value, func) { // default API oriented function
+        params: {},
+        queryParamKey: "query",
+        request: function (value, params, func) {
             if (this.URL) {
-                if (this.prepareParams != null && typeof (this.prepareParams) == 'function')
-                    this.prepareParams(value, request, func)
-                else {
-                    var params = this.Params
-                    params[this.QueryParamName] = value;
-                    this.request(value, params, func)
-                }
+                $.getJSON(this.URL + (this.JSONP ? '?callback=?' : ''),
+                        params,
+                        (function (data) {
+                            if (typeof (data) == 'string') {
+                                data = JSON.parse(data);
+                            }
+                            if (this.ResultSuffix != null) {
+                                var result = data[this.ResultSuffix];
+                            } else {
+                                var result = data;
+                            }
+                            var A = [];
+                            for (i in result)
+                                A.push(result[i])
+                            func({Array: A, Sorted: true}, value, value);
+                        }).bind(this));
             } else
                 func({Array: [], Sorted: true}, value, value);
         },
-        request: function request(value, params, func) {
-            $.getJSON(this.URL + (this.JSONP ? '?callback=?' : ''),
-                    params,
-                    (function (data) {
-                        if (typeof (data) == 'string') {
-                            data = JSON.parse(data);
-                        }
-                        if (this.ResultSuffix != null) {
-                            var result = data[this.ResultSuffix];
-                        } else {
-                            var result = data;
-                        }
-                        var A = [];
-                        for (i in result)
-                            A.push(result[i])
-                        func({Array: A, Sorted: true}, value, value);
-                    }).bind(this));
+        prepareParams: function (value, func) {
+            // DO SOMETHING WITH PARAMS including query assignment
+            var params = this.params
+            params[this.queryParamKey] = value;
+            this.request(value, params, func)
         },
-		matchingValue: function() {
-			return this.target.val()?this.target.val():(this.target.attr("placeholder")?this.target.attr("placeholder"):'')
-		}
-        /*prepareParams: function(value,requestFunc,func) {
-         // DO SOMETHING WITH PARAMS including query assignment
-         requestFunc(value,requestParams,func)
-         },*/
+        matchingValue: function () {
+            return this.target.val() ? this.target.val() : (this.target.attr("placeholder") ? this.target.attr("placeholder") : '')
+        },
 //			backgroundTarget:,
 //			colorTarget:,
 //			borderTarget:,
 //			boxShadowTarget:,
 //			positionTarget:
-//			FrameShadowColor :"black",
+//			frameShadowColor :"black",
 //			backgroundColor : "white",
 //			color : "black",
-//			SelectedBackgroundColor: "black",
-//			SelectedColor : "white",
-//			AccentuationColor: "red",
-//			SelectedAccentuationColor: "red",
-//			LinesSeparatorColor: "grey",
+//			selectedBackgroundColor: "black",
+//			selectedColor : "white",
+//			accentuationColor: "red",
+//			selectedAccentuationColor: "red",
+//			linesSeparatorColor: "grey",
     };
     horecaTechTypeAhead.parseHsla = function (color) {
         if (color.toUpperCase().indexOf('RGB') > -1) {
@@ -221,16 +215,16 @@
             this.prevValue = value;
             this.prevValueID = valueID;
             this.Source[valueID].built = true;
-            var SourceValKey = (this.Source[valueID].ValKey == null) ? this.SourceValKey : this.Source[valueID].ValKey;
+            var sourceValKey = (this.Source[valueID].ValKey == null) ? this.sourceValKey : this.Source[valueID].ValKey;
             this.Array = [];
-            this.SourceSortKey_ = (this.Source[valueID].SortKey != null) ? this.Source[valueID].SortKey : (this.SourceSortKey != null) ? this.SourceSortKey : SourceValKey;
-            this.SourceIdKey_ = (this.Source[valueID].IdKey == null) ? this.SourceIdKey : this.Source[valueID].IdKey;
-            this.SourcePutKey_ = (this.Source[valueID].PutKey != null) ? this.Source[valueID].PutKey : (this.SourcePutKey != null) ? this.SourcePutKey : SourceValKey;
-            this.SourceType_ = (this.Source[valueID].Type == null) ? this.SourceType : this.Source[valueID].Type;
+            this.SourceSortKey_ = (this.Source[valueID].SortKey != null) ? this.Source[valueID].SortKey : (this.SourceSortKey != null) ? this.SourceSortKey : sourceValKey;
+            this.SourceIdKey_ = (this.Source[valueID].IdKey == null) ? this.sourceIdKey : this.Source[valueID].IdKey;
+            this.SourcePutKey_ = (this.Source[valueID].PutKey != null) ? this.Source[valueID].PutKey : (this.SourcePutKey != null) ? this.SourcePutKey : sourceValKey;
+            this.SourceType_ = (this.Source[valueID].Type == null) ? this.sourceType : this.Source[valueID].Type;
             if (this.SourceType_ == null)
                 this.SourceType_ = (this.Source[valueID].Array.prototype.toString.call(arguments[2]) == "[object Array]") ? "A" : "O";
             if (this.SourceType_ == "A") {
-                if (!this.Source[valueID].Sorted && this.Source[valueID].Sortable) {
+                if (!this.Source[valueID].Sorted && this.Source[valueID].isSortable) {
                     this.Source[valueID].Array.sort()
                     this.Source[valueID].Sorted = true;
                 }
@@ -240,50 +234,50 @@
                         if (index > -1)
                             this.Array.push({value: this.Source[valueID].Array[a], id: this.Source[valueID].Array[a], index: index});
                     }
-                    if (this.Source[valueID].Sortable)
+                    if (this.Source[valueID].isSortable)
                         this.Array.sort(horecaTechTypeAhead.build.sort_func_index);
                 } else
                     for (a in this.Source[valueID].Array)
                         this.Array.push({value: this.Source[valueID].Array[a], id: this.Source[valueID].Array[a], index: this.Source[valueID].Array[a].toLowerCase().indexOf(value.toLowerCase())});
             } else {
-                if (!this.Source[valueID].Sorted && this.Source[valueID].Sortable) {
+                if (!this.Source[valueID].Sorted && this.Source[valueID].isSortable) {
                     this.Source[valueID].Array.sort(horecaTechTypeAhead.build.sort_func.bind(this))
                     this.Source[valueID].Sorted = true;
                 }
                 if (value != valueID) {
                     for (a in this.Source[valueID].Array) {
-                        var index = this.Source[valueID].Array[a][SourceValKey].toLowerCase().indexOf(value.toLowerCase());
+                        var index = this.Source[valueID].Array[a][sourceValKey].toLowerCase().indexOf(value.toLowerCase());
                         if (index > -1)
-                            this.Array.push({sort: this.Source[valueID].Array[a][this.SourceSortKey_], value: this.Source[valueID].Array[a][SourceValKey], id: this.Source[valueID].Array[a][this.SourceIdKey_], index: index});
+                            this.Array.push({sort: this.Source[valueID].Array[a][this.SourceSortKey_], value: this.Source[valueID].Array[a][sourceValKey], id: this.Source[valueID].Array[a][this.SourceIdKey_], index: index});
                     }
-                    if (this.Source[valueID].Sortable)
+                    if (this.Source[valueID].isSortable)
                         this.Array.sort(horecaTechTypeAhead.build.sort_func_index_sort);
                 } else
                     for (a in this.Source[valueID].Array)
-                        this.Array.push({value: this.Source[valueID].Array[a][SourceValKey], id: this.Source[valueID].Array[a][this.SourceIdKey_], index: this.Source[valueID].Array[a][SourceValKey].toLowerCase().indexOf(value.toLowerCase())});
+                        this.Array.push({value: this.Source[valueID].Array[a][sourceValKey], id: this.Source[valueID].Array[a][this.SourceIdKey_], index: this.Source[valueID].Array[a][sourceValKey].toLowerCase().indexOf(value.toLowerCase())});
             }
             if (this.Array.length == 0) {
                 frame.css("display", "none");
                 container.empty();
-                if (this.Docking) {
+                if (this.isDocking) {
                     this.borderTarget.css({borderBottomLeftRadius: this.borderRadius.Bottom.Left, borderBottomRightRadius: this.borderRadius.Bottom.Right});
                     this.borderTarget.css({borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
                 }
             } else {
-                var str = "",selected=[];
+                var str = "", selected = [],matchingValue=this.matchingValue()
                 for (var a in this.Array) {
-					if (this.matchingValue.call(this)==this.Array[a].value)
-						selected.push(a)
-                    str += "<p key=\"" + valueID + "\" tg=\"" + this.ID + "\" indx=\"" + a + "\" id=\"horeca-tech-type-a-head-element-" + this.ID + "-" + a + "\" class=\"horeca-tech-type-a-head-element horeca-tech-type-a-head-element-class-" + this.ID + "\">" + ((this.Array[a].index < 0 || !this.Accentuation) ? this.Array[a].value : (this.Array[a].value.substr(0, this.Array[a].index) + "<span style=\"COLOR:" + this.AccentuationColor + "\">" + this.Array[a].value.substr(this.Array[a].index, value.length) + "</span>" + this.Array[a].value.substr(this.Array[a].index + value.length, this.Array[a].value.length - this.Array[a].index - value.length))) + "</p>";
-				}
-				container.html(str);
+                    if (matchingValue == this.Array[a].value)
+                        selected.push(a)
+                    str += "<p key=\"" + valueID + "\" tg=\"" + this.ID + "\" indx=\"" + a + "\" id=\"horeca-tech-type-a-head-element-" + this.ID + "-" + a + "\" class=\"horeca-tech-type-a-head-element horeca-tech-type-a-head-element-class-" + this.ID + "\">" + ((this.Array[a].index < 0 || !this.isAccentuation) ? this.Array[a].value : (this.Array[a].value.substr(0, this.Array[a].index) + "<span style=\"COLOR:" + this.accentuationColor + "\">" + this.Array[a].value.substr(this.Array[a].index, value.length) + "</span>" + this.Array[a].value.substr(this.Array[a].index + value.length, this.Array[a].value.length - this.Array[a].index - value.length))) + "</p>";
+                }
+                container.html(str);
                 container.css("width", "auto")
                 var scr_height = $(window).height(),
                         scr_width = $(window).width();
                 frame.css("display", "block");
                 frame.width(scr_width);
                 var content_height = container.height(),
-                        content_height_to_show = Math.min(this.MaxLines * this.rowHeight, content_height),
+                        content_height_to_show = Math.min(this.maxLines * this.rowHeight, content_height),
                         border__ = parseInt(frame.css("border-top-width")) + parseInt(frame.css("border-bottom-width"));
                 if (scr_height - this.coord.bottom < content_height_to_show + border__) {
                     if (scr_height - this.coord.bottom > this.coord.top) {
@@ -316,21 +310,21 @@
                 }
                 if (this.position == 'b') {
                     frame.css({top: this.coord.bottom});
-                    if (this.Docking) {
+                    if (this.isDocking) {
                         frame.css({borderTopLeftRadius: Math.min(this.borderRadius.Bottom.Left, Math.max(0, l_offset)), borderTopRightRadius: Math.min(this.borderRadius.Bottom.Right, Math.max(0, r_offset)), borderBottomLeftRadius: this.borderRadius.Top.Left, borderBottomRightRadius: this.borderRadius.Top.Right});
                         this.borderTarget.css({borderBottomLeftRadius: Math.min(this.borderRadius.Bottom.Left, Math.max(0, -l_offset)), borderBottomRightRadius: Math.min(this.borderRadius.Bottom.Right, Math.max(0, -r_offset)), borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
                     }
                 } else {
                     frame.css({top: this.coord.top - content_height_to_show - border__});
-                    if (this.Docking) {
+                    if (this.isDocking) {
                         frame.css({borderBottomLeftRadius: Math.min(this.borderRadius.Top.Left, Math.max(0, l_offset)), borderBottomRightRadius: Math.min(this.borderRadius.Top.Right, Math.max(0, r_offset)), borderTopLeftRadius: this.borderRadius.Bottom.Left, borderTopRightRadius: this.borderRadius.Bottom.Right});
                         this.borderTarget.css({borderTopLeftRadius: Math.min(this.borderRadius.Top.Left, Math.max(0, -l_offset)), borderTopRightRadius: Math.min(this.borderRadius.Top.Right, Math.max(0, -r_offset)), borderBottomLeftRadius: this.borderRadius.Bottom.Left, borderBottomRightRadius: this.borderRadius.Bottom.Right});
                     }
                 }
-				for (var i in selected)
-					$("#horeca-tech-type-a-head-element-" + this.ID + "-" + selected[i]).trigger("mouseover.horeca-tech-type-a-head")
+                for (var i in selected)
+                    $("#horeca-tech-type-a-head-element-" + this.ID + "-" + selected[i]).trigger("mouseover.horeca-tech-type-a-head")
             }
-			
+
         }
     }
     horecaTechTypeAhead.build.sort_func = function (a, b) {
@@ -385,7 +379,7 @@
         return (w1 - w2);
     }
     horecaTechTypeAhead.undock = function () {
-        if (this.Docking) {
+        if (this.isDocking) {
             this.borderTarget.css({borderBottomLeftRadius: this.borderRadius.Bottom.Left, borderBottomRightRadius: this.borderRadius.Bottom.Right});
             this.borderTarget.css({borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
         }
@@ -395,7 +389,7 @@
                 value = $('[horeca-tech-type-a-head="' + targetID + '"]').val();
         if (this_ != null) {
             if (this_.Source[value] == null) {
-                this_.getSourceObject.call(this_, value, (function (result, value, valueID) {
+                this_.prepareParams.call(this_, value, (function (result, value, valueID) {
                     this_.Source[valueID] = result;
                     horecaTechTypeAhead.build.call(this_, value, valueID);
                 }).bind(this_));
@@ -414,17 +408,23 @@
             var TAH = horecaTechTypeAhead,
                     template = TAH.dataOpt[targetID],
                     this_ = $.extend(true, {}, template)
+            this_.reset = template.reset;
+            if(this_.reset)
+                this_.reset = this_.reset.bind(this_);
+            this_.matchingValue = template.matchingValue.bind(this_);
+            this_.prepareParams = template.prepareParams.bind(this_);
+            this_.request = template.request ? template.request.bind(this_) : undefined;
+            if (this_.noNew) {
+                this_.iniValue=this_.matchingValue()
+            }
             if (this_.emptyField) {
                 this_.placeholder = this_.target.attr('placeholder')
                 this_.target.attr('placeholder', this_.target.val())
                 this_.target.val("")
             }
-            this_.getSourceObject = template.getSourceObject.bind(this_);
-            this_.prepareParams = template.prepareParams ? template.prepareParams.bind(this_) : undefined;
-            this_.request = template.request ? template.request.bind(this_) : undefined;
-            if (this_.Container && typeof (this_.Container) == 'string')
-                this_.Container = $(this_.Container)
-            this_.Container.append('<div id="horeca-tech-type-a-head-frame-' + targetID + '" tg="' + targetID + '" class="horeca-tech-type-a-head-frame-class-' + targetID + '"><div id="horeca-tech-type-a-head-container-' + targetID + '" wrap="soft" class="horeca-tech-type-a-head-container-class-' + targetID + '"></div></div>');
+            if (this_.container && typeof (this_.container) == 'string')
+                this_.container = $(this_.container)
+            this_.container.append('<div id="horeca-tech-type-a-head-frame-' + targetID + '" tg="' + targetID + '" class="horeca-tech-type-a-head-frame-class-' + targetID + '"><div id="horeca-tech-type-a-head-container-' + targetID + '" wrap="soft" class="horeca-tech-type-a-head-container-class-' + targetID + '"></div></div>');
             var frame = $("#horeca-tech-type-a-head-frame-" + targetID)
             frame.append("<style>.horeca-tech-type-a-head-frame-class-" + targetID + "{z-index:20;width:auto;height:auto;position:fixed;display:block;overflow-y:auto;overflow-x:hidden} .horeca-tech-type-a-head-container-class-" + targetID + "{background-color:transparent;width:auto;height:auto;top:0;left:0;position:absolute;display:block;overflow:hidden}</style>");
             for (var css_attr in TAH.cssAttrArray)
@@ -456,14 +456,14 @@
             this_.colorHSLA = TAH.parseHsla(this_.color);
             this_.backgroundColorHSLA = TAH.parseHsla(this_.backgroundColor);
             this_.textShadowColorHSLA = TAH.parseHsla(this_.textShadowColor);
-            this_.LinesSeparatorColor = (template.LinesSeparatorColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + this_.colorHSLA.l + "%," + (this_.colorHSLA.a * 0.3) + ")" : template.LinesSeparatorColor;
-            this_.AccentuationColor = (template.AccentuationColor == null) ? "HSLA(" + ((this_.backgroundColorHSLA.s + this_.colorHSLA.s) > 0 ? Math.round(((this_.colorHSLA.h * this_.colorHSLA.s + this_.backgroundColorHSLA.h * this_.backgroundColorHSLA.s) / (this_.backgroundColorHSLA.s + this_.colorHSLA.s) + 180) % 360) : '0') + ",100%," + (((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 + Math.abs((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.colorHSLA.a + ")" : template.AccentuationColor;
-            this_.SelectedColor = (template.SelectedColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + Math.abs(this_.colorHSLA.l - 100) + "%," + this_.colorHSLA.a + ")" : template.SelectedColor;
+            this_.linesSeparatorColor = (template.linesSeparatorColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + this_.colorHSLA.l + "%," + (this_.colorHSLA.a * 0.3) + ")" : template.linesSeparatorColor;
+            this_.accentuationColor = (template.accentuationColor == null) ? "HSLA(" + ((this_.backgroundColorHSLA.s + this_.colorHSLA.s) > 0 ? Math.round(((this_.colorHSLA.h * this_.colorHSLA.s + this_.backgroundColorHSLA.h * this_.backgroundColorHSLA.s) / (this_.backgroundColorHSLA.s + this_.colorHSLA.s) + 180) % 360) : '0') + ",100%," + (((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 + Math.abs((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.colorHSLA.a + ")" : template.accentuationColor;
+            this_.selectedColor = (template.selectedColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + Math.abs(this_.colorHSLA.l - 100) + "%," + this_.colorHSLA.a + ")" : template.selectedColor;
             this_.SelectedTextShadow = (template.SelectedTextShadow == null) ? ("HSLA(" + this_.textShadowColorHSLA.h + "," + this_.textShadowColorHSLA.s + "%," + Math.abs(this_.textShadowColorHSLA.l - 100) + "%," + this_.textShadowColorHSLA.a + ")" + this_.textShadow.substr(this_.textShadow.indexOf(')') + 1, this_.textShadow.length - this_.textShadow.indexOf(')') - 1)) : template.SelectedTextShadow;
-            this_.SelectedBackgroundColor = (template.SelectedBackgroundColor == null) ? "HSLA(" + this_.backgroundColorHSLA.h + "," + this_.backgroundColorHSLA.s + "%," + Math.abs(this_.backgroundColorHSLA.l - 100) + "%," + this_.backgroundColorHSLA.a + ")" : template.SelectedBackgroundColor;
-            this_.SelectedAccentuationColor = (template.SelectedAccentuationColor == null) ? this_.AccentuationColor : template.SelectedAccentuationColor;
-            this_.rowHeight = this_.target.height() + parseInt(this_.target.css("padding-top")) + parseInt(this_.target.css("padding-bottom")) + ((this_.LinesSeparator) ? 1 : 0);
-            var stylehtml = ".horeca-tech-type-a-head-element-class-" + targetID + " {padding-right:" + this_.paddingRight + ";padding-top:" + this_.paddingTop + ";padding-bottom:" + this_.paddingBottom + ";padding-left:" + this_.paddingLeft + ";max-width:" + $(window).width() + ";margin:0;color:" + this_.color + ";width:auto;overflow:hidden;position:relative;display:block;" + ((this_.LinesSeparator) ? ("border-top:1px solid " + this_.LinesSeparatorColor) : "") + "}";
+            this_.selectedBackgroundColor = (template.selectedBackgroundColor == null) ? "HSLA(" + this_.backgroundColorHSLA.h + "," + this_.backgroundColorHSLA.s + "%," + Math.abs(this_.backgroundColorHSLA.l - 100) + "%," + this_.backgroundColorHSLA.a + ")" : template.selectedBackgroundColor;
+            this_.selectedAccentuationColor = (template.selectedAccentuationColor == null) ? this_.accentuationColor : template.selectedAccentuationColor;
+            this_.rowHeight = this_.target.height() + parseInt(this_.target.css("padding-top")) + parseInt(this_.target.css("padding-bottom")) + ((this_.isLinesSeparator) ? 1 : 0);
+            var stylehtml = ".horeca-tech-type-a-head-element-class-" + targetID + " {padding-right:" + this_.paddingRight + ";padding-top:" + this_.paddingTop + ";padding-bottom:" + this_.paddingBottom + ";padding-left:" + this_.paddingLeft + ";max-width:" + $(window).width() + ";margin:0;color:" + this_.color + ";width:auto;overflow:hidden;position:relative;display:block;" + ((this_.isLinesSeparator) ? ("border-top:1px solid " + this_.linesSeparatorColor) : "") + "}";
             var styleTag = $("#httypeahead_style" + targetID)
             if (styleTag.length == 0)
                 frame.append("<style id=\"httypeahead_style" + targetID + "\">" + stylehtml + "</style>");
@@ -491,26 +491,35 @@
             if (this_.emptyField) {
                 if (this_.unchanged)
                     this_.target.val(this_.target.attr("placeholder"))
-                if (this_.placeholder!==undefined)
+                if (this_.placeholder !== undefined)
                     this_.target.attr("placeholder", this_.placeholder)
                 else
                     this_.target.removeAttr("placeholder")
             }
-            if (this_.onCancel != null && typeof (this_.onCancel) == 'function')
+            if (this_.noNew) {
+                if (this_.reset) {
+                    this_.reset(this_.target,this_.iniValue);
+                } else if (this_.onClose)
+                    this_.onClose(this_.target,{value:this_.iniValue})
+            } else if (this_.onCancel != null && typeof (this_.onCancel) == 'function')
                 this_.onCancel(this_.target);
             delete horecaTechTypeAhead.data[this_.ID];
         }
-    }).on("mouseout", ".horeca-tech-type-a-head-element", function (e) {
+    }).on("mouseout",".horeca-tech-active-type-a-head",function() {
+        var targetID = $(this).attr("horeca-tech-type-a-head")
+        if (targetID)
+            $(".horeca-tech-type-a-head-element-class-" +targetID).trigger("mouseout.horeca-tech-type-a-head")
+    }).on("mouseout.horeca-tech-type-a-head", ".horeca-tech-type-a-head-element", function () {
         var elm = $(this), this_
         if (elm.length && elm.attr('tg') && (this_ = horecaTechTypeAhead.data[elm.attr('tg')])) {
-            elm.find('span').css({color: this_.AccentuationColor})
+            elm.find('span').css({color: this_.accentuationColor})
             elm.css({backgroundColor: "transparent", color: this_.color, textShadow: this_.textShadow});
         }
-    }).on("mouseover.horeca-tech-type-a-head", ".horeca-tech-type-a-head-element", function (e) {
+    }).on("mouseover.horeca-tech-type-a-head", ".horeca-tech-type-a-head-element", function () {
         var elm = $(this), this_
         if (elm.length && elm.attr('tg') && (this_ = horecaTechTypeAhead.data[elm.attr('tg')])) {
-            elm.find('span').css({color: this_.SelectedAccentuationColor})
-            elm.css({backgroundColor: this_.SelectedBackgroundColor, color: this_.SelectedColor, textShadow: this_.SelectedTextShadow});
+            elm.find('span').css({color: this_.selectedAccentuationColor})
+            elm.css({backgroundColor: this_.selectedBackgroundColor, color: this_.selectedColor, textShadow: this_.SelectedTextShadow});
         }
     }).on("mousedown", ".horeca-tech-type-a-head-element", function (e) {
         e.stopPropagation();
@@ -521,7 +530,7 @@
                     valueID = elm.attr("key");
             horecaTechTypeAhead.undock.call(this_)
             if (this_.emptyField) {
-                if (this_.placeholder!==undefined)
+                if (this_.placeholder !== undefined)
                     this_.target.attr("placeholder", this_.placeholder)
                 else
                     this_.target.removeAttr("placeholder")
@@ -547,7 +556,8 @@
         // первоначальная копия дефолтных значений в создаваемый шаблон
         if (TAH.dataOpt[targetID] == null) {
             TAH.dataOpt[targetID] = $.extend(true, {}, TAH.options);
-            TAH.dataOpt[targetID].getSourceObject = TAH.options.getSourceObject;
+            TAH.dataOpt[targetID].reset = TAH.options.reset;
+            TAH.dataOpt[targetID].matchingValue = TAH.options.matchingValue;
             TAH.dataOpt[targetID].prepareParams = TAH.options.prepareParams;
             TAH.dataOpt[targetID].request = TAH.options.request;
         }
@@ -556,8 +566,12 @@
 
 // наложение импортируемых на шаблон 
         TAH.dataOpt[targetID] = $.extend(true, TAH.dataOpt[targetID], opt);
-        if (opt.getSourceObject != null)
-            TAH.dataOpt[targetID].getSourceObject = opt.getSourceObject;
+        if (opt.request != null)
+            TAH.dataOpt[targetID].request = opt.request;
+        if (opt.reset != null)
+            TAH.dataOpt[targetID].reset = opt.reset;
+        if (opt.matchingValue != null)
+            TAH.dataOpt[targetID].matchingValue = opt.matchingValue;
         if (opt.prepareParams != null)
             TAH.dataOpt[targetID].prepareParams = opt.prepareParams;
         TAH.dataOpt[targetID].prevValue = null;

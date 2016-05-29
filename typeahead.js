@@ -50,7 +50,7 @@
         paddingRight: "padding-right"
     }
     horecaTechTypeAhead.stdColor = {
-        white: "#FFFFF",
+        white: "#ffffff",
         silver: "#c0c0c0",
         grey: "#808080",
         red: "#ff0000",
@@ -262,7 +262,7 @@
                     this.borderTarget.css({borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
                 }
             } else {
-                var str = "", selected = [],matchingValue=this.matchingValue()
+                var str = "", selected = [], matchingValue = this.matchingValue()
                 for (var a in this.Array) {
                     if (matchingValue == this.Array[a].value)
                         selected.push(a)
@@ -406,13 +406,13 @@
                     template = TAH.dataOpt[targetID],
                     this_ = $.extend(true, {}, template)
             this_.reset = template.reset;
-            if(this_.reset)
+            if (this_.reset)
                 this_.reset = this_.reset.bind(this_);
             this_.matchingValue = template.matchingValue.bind(this_);
             this_.prepareParams = template.prepareParams.bind(this_);
             this_.request = template.request ? template.request.bind(this_) : undefined;
             if (this_.noNew) {
-                this_.iniValue=this_.matchingValue()
+                this_.iniValue = this_.matchingValue()
             }
             if (this_.emptyField) {
                 this_.placeholder = this_.target.attr('placeholder')
@@ -458,9 +458,9 @@
             this_.selectedColor = (template.selectedColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + Math.abs(this_.colorHSLA.l - 100) + "%," + this_.colorHSLA.a + ")" : template.selectedColor;
             this_.selectedTextShadow = (template.selectedTextShadow == null) ? ("HSLA(" + this_.textShadowColorHSLA.h + "," + this_.textShadowColorHSLA.s + "%," + Math.abs(this_.textShadowColorHSLA.l - 100) + "%," + this_.textShadowColorHSLA.a + ")" + this_.textShadow.substr(this_.textShadow.indexOf(')') + 1, this_.textShadow.length - this_.textShadow.indexOf(')') - 1)) : template.selectedTextShadow;
             this_.selectedBackgroundColor = (template.selectedBackgroundColor == null) ? "HSLA(" + this_.backgroundColorHSLA.h + "," + this_.backgroundColorHSLA.s + "%," + Math.abs(this_.backgroundColorHSLA.l - 100) + "%," + this_.backgroundColorHSLA.a + ")" : template.selectedBackgroundColor;
-			this_.selectedColorHSLA=TAH.parseHsl(this_.selectedColor)
-            this_.selectedBackgroundColorHSLA=TAH.parseHsl(this_.selectedBackgroundColor)
-			this_.selectedAccentuationColor = (template.selectedAccentuationColor == null) ? "HSLA(" + ((this_.selectedBackgroundColorHSLA.s + this_.selectedColorHSLA.s) > 0 ? Math.round(((this_.selectedColorHSLA.h * this_.selectedColorHSLA.s + this_.selectedBackgroundColorHSLA.h * this_.selectedBackgroundColorHSLA.s) / (this_.selectedBackgroundColorHSLA.s + this_.selectedColorHSLA.s) + 180) % 360) : '0') + ",100%," + (((this_.selectedColorHSLA.l + this_.selectedBackgroundColorHSLA.l) / 2 + Math.abs((this_.selectedColorHSLA.l + this_.selectedBackgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.selectedColorHSLA.a + ")" : template.selectedAccentuationColor;
+            this_.selectedColorHSLA = TAH.parseHsl(this_.selectedColor)
+            this_.selectedBackgroundColorHSLA = TAH.parseHsl(this_.selectedBackgroundColor)
+            this_.selectedAccentuationColor = (template.selectedAccentuationColor == null) ? "HSLA(" + ((this_.selectedBackgroundColorHSLA.s + this_.selectedColorHSLA.s) > 0 ? Math.round(((this_.selectedColorHSLA.h * this_.selectedColorHSLA.s + this_.selectedBackgroundColorHSLA.h * this_.selectedBackgroundColorHSLA.s) / (this_.selectedBackgroundColorHSLA.s + this_.selectedColorHSLA.s) + 180) % 360) : '0') + ",100%," + (((this_.selectedColorHSLA.l + this_.selectedBackgroundColorHSLA.l) / 2 + Math.abs((this_.selectedColorHSLA.l + this_.selectedBackgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.selectedColorHSLA.a + ")" : template.selectedAccentuationColor;
             this_.rowHeight = this_.target.height() + parseInt(this_.target.css("padding-top")) + parseInt(this_.target.css("padding-bottom")) + ((this_.isLinesSeparator) ? 1 : 0);
             var stylehtml = ".horeca-tech-type-a-head-element-class-" + targetID + " {padding-right:" + this_.paddingRight + ";padding-top:" + this_.paddingTop + ";padding-bottom:" + this_.paddingBottom + ";padding-left:" + this_.paddingLeft + ";max-width:" + $(window).width() + ";margin:0;color:" + this_.color + ";width:auto;overflow:hidden;position:relative;display:block;" + ((this_.isLinesSeparator) ? ("border-top:1px solid " + this_.linesSeparatorColor) : "") + "}";
             var styleTag = $("#httypeahead_style" + targetID)
@@ -497,17 +497,17 @@
             }
             if (this_.noNew) {
                 if (this_.reset) {
-                    this_.reset(this_.target,this_.iniValue);
+                    this_.reset(this_.target, this_.iniValue);
                 } else if (this_.onClose)
-                    this_.onClose(this_.target,{value:this_.iniValue})
+                    this_.onClose(this_.target, {value: this_.iniValue})
             } else if (this_.onCancel != null && typeof (this_.onCancel) == 'function')
                 this_.onCancel(this_.target);
             delete horecaTechTypeAhead.data[this_.ID];
         }
-    }).on("mouseout",".horeca-tech-active-type-a-head",function() {
+    }).on("mouseout", ".horeca-tech-active-type-a-head", function () {
         var targetID = $(this).attr("horeca-tech-type-a-head")
         if (targetID)
-            $(".horeca-tech-type-a-head-element-class-" +targetID).trigger("mouseout.horeca-tech-type-a-head")
+            $(".horeca-tech-type-a-head-element-class-" + targetID).trigger("mouseout.horeca-tech-type-a-head")
     }).on("mouseout.horeca-tech-type-a-head", ".horeca-tech-type-a-head-element", function () {
         var elm = $(this), this_
         if (elm.length && elm.attr('tg') && (this_ = horecaTechTypeAhead.data[elm.attr('tg')])) {

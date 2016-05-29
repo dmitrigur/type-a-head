@@ -115,7 +115,10 @@
                             A.push(result[i])
                         func({Array: A, Sorted: true}, value, value);
                     }).bind(this));
-        }
+        },
+		matchingValue: function() {
+			return this_.target.val()?this_.target.val():(this_.target.attr("placeholder")?this_.target.attr("placeholder"):'')
+		}
         /*prepareParams: function(value,requestFunc,func) {
          // DO SOMETHING WITH PARAMS including query assignment
          requestFunc(value,requestParams,func)
@@ -267,10 +270,13 @@
                     this.borderTarget.css({borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
                 }
             } else {
-                var str = "";
-                for (var a in this.Array)
+                var str = "",selected=[];
+                for (var a in this.Array) {
+					if (this.matchingValue()==this.Array[a].value)
+						selected.push(a)
                     str += "<p key=\"" + valueID + "\" tg=\"" + this.ID + "\" indx=\"" + a + "\" id=\"horeca-tech-type-a-head-element-" + this.ID + "-" + a + "\" class=\"horeca-tech-type-a-head-element horeca-tech-type-a-head-element-class-" + this.ID + "\">" + ((this.Array[a].index < 0 || !this.Accentuation) ? this.Array[a].value : (this.Array[a].value.substr(0, this.Array[a].index) + "<span style=\"COLOR:" + this.AccentuationColor + "\">" + this.Array[a].value.substr(this.Array[a].index, value.length) + "</span>" + this.Array[a].value.substr(this.Array[a].index + value.length, this.Array[a].value.length - this.Array[a].index - value.length))) + "</p>";
-                container.html(str);
+				}
+				container.html(str);
                 container.css("width", "auto")
                 var scr_height = $(window).height(),
                         scr_width = $(window).width();
@@ -321,7 +327,10 @@
                         this.borderTarget.css({borderTopLeftRadius: Math.min(this.borderRadius.Top.Left, Math.max(0, -l_offset)), borderTopRightRadius: Math.min(this.borderRadius.Top.Right, Math.max(0, -r_offset)), borderBottomLeftRadius: this.borderRadius.Bottom.Left, borderBottomRightRadius: this.borderRadius.Bottom.Right});
                     }
                 }
+				for (var i in selected)
+					$("#horeca-tech-type-a-head-element-" + this.ID + "-" + selected[i]).trigger("mouseover.horeca-tech-type-a-head")
             }
+			
         }
     }
     horecaTechTypeAhead.build.sort_func = function (a, b) {
@@ -497,7 +506,7 @@
             elm.find('span').css({color: this_.AccentuationColor})
             elm.css({backgroundColor: "transparent", color: this_.color, textShadow: this_.textShadow});
         }
-    }).on("mouseover", ".horeca-tech-type-a-head-element", function (e) {
+    }).on("mouseover.horeca-tech-type-a-head", ".horeca-tech-type-a-head-element", function (e) {
         var elm = $(this), this_
         if (elm.length && elm.attr('tg') && (this_ = horecaTechTypeAhead.data[elm.attr('tg')])) {
             elm.find('span').css({color: this_.SelectedAccentuationColor})

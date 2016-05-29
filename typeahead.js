@@ -81,7 +81,7 @@
         sourceIdKey: "id",
         isSortable: true,
         emptyField: false,
-        noNew: true,
+        noNew: false,
         Source: {},
         URL: false,
         JSONP: true,

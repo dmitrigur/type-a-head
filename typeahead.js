@@ -79,7 +79,8 @@
         SourceType: "A",
         SourceValKey: "value",
         SourceIdKey: "id",
-        Sortable:true,
+        Sortable: true,
+        emptyField: false,
         Source: {},
         URL: false,
         JSONP: true,
@@ -380,6 +381,21 @@
             this.borderTarget.css({borderTopLeftRadius: this.borderRadius.Top.Left, borderTopRightRadius: this.borderRadius.Top.Right});
         }
     }
+    horecaTechTypeAhead.typing = function (targetID) {
+        var this_ = horecaTechTypeAhead.data[targetID],
+                value = $('[horeca-tech-type-a-head="' + targetID + '"]').val();
+        if (this_ != null) {
+            if (this_.Source[value] == null) {
+                this_.getSourceObject.call(this_, value, (function (result, value, valueID) {
+                    this_.Source[valueID] = result;
+                    horecaTechTypeAhead.build.call(this_, value, valueID);
+                }).bind(this_));
+                horecaTechTypeAhead.build.call(this_, value, null);
+            } else
+                horecaTechTypeAhead.build.call(this_, value, value);
+        }
+
+    }
     $(document).scroll(function () {
         $(".horeca-tech-active-type-a-head").trigger("blur.horeca-tech-type-a-head")
     }).on("focus", ".horeca-tech-active-type-a-head", function (e) {
@@ -389,6 +405,11 @@
             var TAH = horecaTechTypeAhead,
                     template = TAH.dataOpt[targetID],
                     this_ = $.extend(true, {}, template)
+            if (this_.emptyField) {
+                this_.placeholder = this_.target.attr('placeholder')
+                this_.target.attr('placeholder', this_.target.val())
+                this_.target.val("")
+            }
             this_.getSourceObject = template.getSourceObject.bind(this_);
             this_.prepareParams = template.prepareParams ? template.prepareParams.bind(this_) : undefined;
             this_.request = template.request ? template.request.bind(this_) : undefined;
@@ -427,7 +448,7 @@
             this_.backgroundColorHSLA = TAH.parseHsla(this_.backgroundColor);
             this_.textShadowColorHSLA = TAH.parseHsla(this_.textShadowColor);
             this_.LinesSeparatorColor = (template.LinesSeparatorColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + this_.colorHSLA.l + "%," + (this_.colorHSLA.a * 0.3) + ")" : template.LinesSeparatorColor;
-            this_.AccentuationColor = (template.AccentuationColor == null) ? "HSLA(" + ((this_.backgroundColorHSLA.s + this_.colorHSLA.s)>0?Math.round(((this_.colorHSLA.h * this_.colorHSLA.s + this_.backgroundColorHSLA.h * this_.backgroundColorHSLA.s) / (this_.backgroundColorHSLA.s + this_.colorHSLA.s) + 180) % 360):'0') + ",100%," + (((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 + Math.abs((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.colorHSLA.a + ")" : template.AccentuationColor;
+            this_.AccentuationColor = (template.AccentuationColor == null) ? "HSLA(" + ((this_.backgroundColorHSLA.s + this_.colorHSLA.s) > 0 ? Math.round(((this_.colorHSLA.h * this_.colorHSLA.s + this_.backgroundColorHSLA.h * this_.backgroundColorHSLA.s) / (this_.backgroundColorHSLA.s + this_.colorHSLA.s) + 180) % 360) : '0') + ",100%," + (((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 + Math.abs((this_.colorHSLA.l + this_.backgroundColorHSLA.l) / 2 - 100)) / 2) + "%," + this_.colorHSLA.a + ")" : template.AccentuationColor;
             this_.SelectedColor = (template.SelectedColor == null) ? "HSLA(" + this_.colorHSLA.h + "," + this_.colorHSLA.s + "%," + Math.abs(this_.colorHSLA.l - 100) + "%," + this_.colorHSLA.a + ")" : template.SelectedColor;
             this_.SelectedTextShadow = (template.SelectedTextShadow == null) ? ("HSLA(" + this_.textShadowColorHSLA.h + "," + this_.textShadowColorHSLA.s + "%," + Math.abs(this_.textShadowColorHSLA.l - 100) + "%," + this_.textShadowColorHSLA.a + ")" + this_.textShadow.substr(this_.textShadow.indexOf(')') + 1, this_.textShadow.length - this_.textShadow.indexOf(')') - 1)) : template.SelectedTextShadow;
             this_.SelectedBackgroundColor = (template.SelectedBackgroundColor == null) ? "HSLA(" + this_.backgroundColorHSLA.h + "," + this_.backgroundColorHSLA.s + "%," + Math.abs(this_.backgroundColorHSLA.l - 100) + "%," + this_.backgroundColorHSLA.a + ")" : template.SelectedBackgroundColor;
@@ -440,30 +461,32 @@
             else
                 styleTag.html(stylehtml);
             this_.scrollbarwidth = TAH.getScrollBarWidth()
+            this_.unchanged = true
             TAH.data[targetID] = this_
         }
-        horecaTechTypeAhead.data[targetID].target.trigger("keyup.horeca-tech-type-a-head")
-    }).on("keyup.horeca-tech-type-a-head", ".horeca-tech-active-type-a-head", function (e) {
+        horecaTechTypeAhead.typing(targetID)
+    }).on("keyup", ".horeca-tech-active-type-a-head", function (e) {
         e.stopPropagation();
-        var targetID = $(this).attr("horeca-tech-type-a-head"),
-                this_ = horecaTechTypeAhead.data[targetID],
-                value = $('[horeca-tech-type-a-head="' + targetID + '"]').val();
-        if (this_ != null) {
-            if (this_.Source[value] == null) {
-                this_.getSourceObject.call(this_, value, (function (result, value, valueID) {
-                    this_.Source[valueID] = result;
-                    horecaTechTypeAhead.build.call(this_, value, valueID);
-                }).bind(this_));
-                horecaTechTypeAhead.build.call(this_, value, null);
-            } else
-                horecaTechTypeAhead.build.call(this_, value, value);
+        var targetID = $(this).attr("horeca-tech-type-a-head")
+        if (horecaTechTypeAhead.data[targetID].emptyField) {
+            horecaTechTypeAhead.data[targetID].unchanged = false
+            $(this).attr("placeholder", "")
         }
+        horecaTechTypeAhead.typing(targetID)
     }).on("blur.horeca-tech-type-a-head", ".horeca-tech-active-type-a-head", function (e) {
         e.stopPropagation();
         var elm = $(this), this_
         if (elm.length && elm.attr("horeca-tech-type-a-head") && (this_ = horecaTechTypeAhead.data[elm.attr("horeca-tech-type-a-head")])) {
             $("#horeca-tech-type-a-head-frame-" + this_.ID).remove();
             horecaTechTypeAhead.undock.call(this_)
+            if (this_.emptyField) {
+                if (this_.unchanged)
+                    this_.target.val(this_.target.attr("placeholder"))
+                if (this_.placeholder!==undefined)
+                    this_.target.attr("placeholder", this_.placeholder)
+                else
+                    this_.target.removeAttr("placeholder")
+            }
             if (this_.onCancel != null && typeof (this_.onCancel) == 'function')
                 this_.onCancel(this_.target);
             delete horecaTechTypeAhead.data[this_.ID];
@@ -488,6 +511,12 @@
             var index = elm.attr("indx"),
                     valueID = elm.attr("key");
             horecaTechTypeAhead.undock.call(this_)
+            if (this_.emptyField) {
+                if (this_.placeholder!==undefined)
+                    this_.target.attr("placeholder", this_.placeholder)
+                else
+                    this_.target.removeAttr("placeholder")
+            }
             if (this_.SourcePutKey_)
                 this_.target.val((this_.SourceType_ == "A") ? this_.Source[valueID].Array[index] : this_.Source[valueID].Array[index][this_.SourcePutKey_]);
             if (this_.onClose != null && typeof (this_.onClose) == 'function')

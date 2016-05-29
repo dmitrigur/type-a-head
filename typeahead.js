@@ -117,7 +117,7 @@
                     }).bind(this));
         },
 		matchingValue: function() {
-			return this_.target.val()?this_.target.val():(this_.target.attr("placeholder")?this_.target.attr("placeholder"):'')
+			return this.target.val()?this.target.val():(this.target.attr("placeholder")?this.target.attr("placeholder"):'')
 		}
         /*prepareParams: function(value,requestFunc,func) {
          // DO SOMETHING WITH PARAMS including query assignment
@@ -272,7 +272,7 @@
             } else {
                 var str = "",selected=[];
                 for (var a in this.Array) {
-					if (this.matchingValue()==this.Array[a].value)
+					if (this.matchingValue.call(this)==this.Array[a].value)
 						selected.push(a)
                     str += "<p key=\"" + valueID + "\" tg=\"" + this.ID + "\" indx=\"" + a + "\" id=\"horeca-tech-type-a-head-element-" + this.ID + "-" + a + "\" class=\"horeca-tech-type-a-head-element horeca-tech-type-a-head-element-class-" + this.ID + "\">" + ((this.Array[a].index < 0 || !this.Accentuation) ? this.Array[a].value : (this.Array[a].value.substr(0, this.Array[a].index) + "<span style=\"COLOR:" + this.AccentuationColor + "\">" + this.Array[a].value.substr(this.Array[a].index, value.length) + "</span>" + this.Array[a].value.substr(this.Array[a].index + value.length, this.Array[a].value.length - this.Array[a].index - value.length))) + "</p>";
 				}

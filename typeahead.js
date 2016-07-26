@@ -113,8 +113,8 @@
             this.request(value, params, func)
         },
         matchingValue: function () {
-            return this.target.val() ? this.target.val() : (this.target.attr("placeholder") ? this.target.attr("placeholder") : '')
-        },
+            return this.target.attr("type-a-head-selected-id") !== undefined ? this.target.attr("type-a-head-selected-id") : this.target.val() ? this.target.val() : (this.target.attr("placeholder") ? this.target.attr("placeholder") : '')
+        }
 //			backgroundTarget:,
 //			colorTarget:,
 //			borderTarget:,
@@ -219,8 +219,6 @@
             this.SourceIdKey_ = (this.Source[valueID].IdKey == null) ? this.sourceIdKey : this.Source[valueID].IdKey;
             this.SourcePutKey_ = (this.Source[valueID].PutKey != null) ? this.Source[valueID].PutKey : (this.SourcePutKey != null) ? this.SourcePutKey : sourceValKey;
             this.SourceType_ = (this.Source[valueID].Type == null) ? this.sourceType : this.Source[valueID].Type;
-            if (this.SourceType_ == null)
-                this.SourceType_ = (this.Source[valueID].Array.prototype.toString.call(arguments[2]) == "[object Array]") ? "A" : "O";
             if (this.SourceType_ == "A") {
                 if (!this.Source[valueID].Sorted && this.Source[valueID].isSortable) {
                     this.Source[valueID].Array.sort()
@@ -264,7 +262,7 @@
             } else {
                 var str = "", selected = [], matchingValue = this.matchingValue()
                 for (var a in this.Array) {
-                    if (matchingValue == this.Array[a].value)
+                    if (matchingValue != null && matchingValue != '' && matchingValue == this.Array[a].id)
                         selected.push(a)
                     str += "<p key=\"" + valueID + "\" tg=\"" + this.ID + "\" indx=\"" + a + "\" id=\"horeca-tech-type-a-head-element-" + this.ID + "-" + a + "\" class=\"horeca-tech-type-a-head-element horeca-tech-type-a-head-element-class-" + this.ID + "\">" + ((this.Array[a].index < 0 || !this.isAccentuation) ? this.Array[a].value : (this.Array[a].value.substr(0, this.Array[a].index) + "<span style=\"COLOR:" + this.accentuationColor + "\">" + this.Array[a].value.substr(this.Array[a].index, value.length) + "</span>" + this.Array[a].value.substr(this.Array[a].index + value.length, this.Array[a].value.length - this.Array[a].index - value.length))) + "</p>";
                 }
@@ -400,6 +398,7 @@
         $(".horeca-tech-active-type-a-head").trigger("blur.horeca-tech-type-a-head")
     }).on("focus", ".horeca-tech-active-type-a-head", function (e) {
         e.stopPropagation();
+        event.cancelBubble = true;
         var targetID = $(this).attr("horeca-tech-type-a-head")
         if ($("#horeca-tech-type-a-head-frame-" + targetID).length == 0) {
             var TAH = horecaTechTypeAhead,
@@ -499,9 +498,9 @@
                 if (this_.reset) {
                     this_.reset(this_.target, this_.iniValue);
                 } else if (this_.onClose)
-                    this_.onClose(this_.target, {value: this_.iniValue})
+                    this_.onClose(this_.target, {status: "cancel", iniValue: this_.iniValue})
             } else if (this_.onCancel != null && typeof (this_.onCancel) == 'function')
-                this_.onCancel(this_.target);
+                this_.onCancel(this_.target, this_.iniValue);
             delete horecaTechTypeAhead.data[this_.ID];
         }
     }).on("mouseout", ".horeca-tech-active-type-a-head", function () {
@@ -537,7 +536,7 @@
             if (this_.SourcePutKey_)
                 this_.target.val((this_.SourceType_ == "A") ? this_.Source[valueID].Array[index] : this_.Source[valueID].Array[index][this_.SourcePutKey_]);
             if (this_.onClose != null && typeof (this_.onClose) == 'function')
-                this_.onClose(this_.target, this_.Array[index], this_.SourceType_, this_.SourceIdKey_, this_.SourcePutKey_);
+                this_.onClose(this_.target, $.extend(this_.Array[index],{'status':'close'}), this_.SourceType_, this_.SourceIdKey_, this_.SourcePutKey_);
             delete horecaTechTypeAhead.data[this_.ID];
         }
     });

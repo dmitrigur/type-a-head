@@ -398,7 +398,7 @@
         $(".horeca-tech-active-type-a-head").trigger("blur.horeca-tech-type-a-head")
     }).on("focus", ".horeca-tech-active-type-a-head", function (e) {
         e.stopPropagation();
-        event.cancelBubble = true;
+        e.cancelBubble = true;
         var targetID = $(this).attr("horeca-tech-type-a-head")
         if ($("#horeca-tech-type-a-head-frame-" + targetID).length == 0) {
             var TAH = horecaTechTypeAhead,

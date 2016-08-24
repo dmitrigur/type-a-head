@@ -471,6 +471,8 @@
             this_.unchanged = true
             TAH.data[targetID] = this_
         }
+        if (template.onFocus)
+            template.onFocus(this_.target, this_)
         horecaTechTypeAhead.typing(targetID)
     }).on("keyup", ".horeca-tech-active-type-a-head", function (e) {
         e.stopPropagation();
@@ -536,7 +538,7 @@
             if (this_.SourcePutKey_)
                 this_.target.val((this_.SourceType_ == "A") ? this_.Source[valueID].Array[index] : this_.Source[valueID].Array[index][this_.SourcePutKey_]);
             if (this_.onClose != null && typeof (this_.onClose) == 'function')
-                this_.onClose(this_.target, $.extend(this_.Array[index],{'status':'close'}), this_.SourceType_, this_.SourceIdKey_, this_.SourcePutKey_);
+                this_.onClose(this_.target, $.extend(this_.Array[index], {'status': 'close'}), this_.SourceType_, this_.SourceIdKey_, this_.SourcePutKey_);
             delete horecaTechTypeAhead.data[this_.ID];
         }
     });
@@ -545,47 +547,49 @@
         delete horecaTechTypeAhead.dataOpt[$(this).attr("horeca-tech-type-a-head")];
     };
     $.fn.HorecaTechTypeahead = function (opt) {
-        var TAH = horecaTechTypeAhead
-        if ($(this).attr("horeca-tech-type-a-head") == null) {
-            $(this).attr("horeca-tech-type-a-head", TAH.counter++);
-        }
-        $(this).addClass("horeca-tech-active-type-a-head");
-        var targetID = $(this).attr("horeca-tech-type-a-head")
-        // первоначальная копия дефолтных значений в создаваемый шаблон
-        if (TAH.dataOpt[targetID] == null) {
-            TAH.dataOpt[targetID] = $.extend(true, {}, TAH.options);
-            TAH.dataOpt[targetID].reset = TAH.options.reset;
-            TAH.dataOpt[targetID].matchingValue = TAH.options.matchingValue;
-            TAH.dataOpt[targetID].prepareParams = TAH.options.prepareParams;
-            TAH.dataOpt[targetID].request = TAH.options.request;
-        }
-        TAH.dataOpt[targetID].target = $(this);
-        TAH.dataOpt[targetID].ID = targetID
+        $(this).each(function () {
+            var TAH = horecaTechTypeAhead
+            if ($(this).attr("horeca-tech-type-a-head") == null) {
+                $(this).attr("horeca-tech-type-a-head", TAH.counter++);
+            }
+            $(this).addClass("horeca-tech-active-type-a-head");
+            var targetID = $(this).attr("horeca-tech-type-a-head")
+            // первоначальная копия дефолтных значений в создаваемый шаблон
+            if (TAH.dataOpt[targetID] == null) {
+                TAH.dataOpt[targetID] = $.extend(true, {}, TAH.options);
+                TAH.dataOpt[targetID].reset = TAH.options.reset;
+                TAH.dataOpt[targetID].matchingValue = TAH.options.matchingValue;
+                TAH.dataOpt[targetID].prepareParams = TAH.options.prepareParams;
+                TAH.dataOpt[targetID].request = TAH.options.request;
+            }
+            TAH.dataOpt[targetID].target = $(this);
+            TAH.dataOpt[targetID].ID = targetID
 
 // наложение импортируемых на шаблон 
-        TAH.dataOpt[targetID] = $.extend(true, TAH.dataOpt[targetID], opt);
-        if (opt.request != null)
-            TAH.dataOpt[targetID].request = opt.request;
-        if (opt.reset != null)
-            TAH.dataOpt[targetID].reset = opt.reset;
-        if (opt.matchingValue != null)
-            TAH.dataOpt[targetID].matchingValue = opt.matchingValue;
-        if (opt.prepareParams != null)
-            TAH.dataOpt[targetID].prepareParams = opt.prepareParams;
-        TAH.dataOpt[targetID].prevValue = null;
-        TAH.dataOpt[targetID].prevValueID = "";
-        if (TAH.dataOpt[targetID].borderTarget && typeof (TAH.dataOpt[targetID].borderTarget) == 'string')
-            TAH.dataOpt[targetID].borderTarget = $(TAH.dataOpt[targetID].borderTarget)
-        if (TAH.dataOpt[targetID].widthTarget && typeof (TAH.dataOpt[targetID].widthTarget) == 'string')
-            TAH.dataOpt[targetID].widthTargett = $(TAH.dataOpt[targetID].widthTarget)
-        if (TAH.dataOpt[targetID].backgroundTarget && typeof (TAH.dataOpt[targetID].backgroundTarget) == 'string')
-            TAH.dataOpt[targetID].backgroundTarget = $(TAH.dataOpt[targetID].backgroundTarget)
-        TAH.dataOpt[targetID].borderTarget = (TAH.dataOpt[targetID].borderTarget && TAH.dataOpt[targetID].borderTarget.length != 0) ? TAH.dataOpt[targetID].borderTarget : TAH.dataOpt[targetID].target;
-        TAH.dataOpt[targetID].widthTarget = (TAH.dataOpt[targetID].widthTarget && TAH.dataOpt[targetID].widthTarget.length != 0) ? TAH.dataOpt[targetID].widthTarget : TAH.dataOpt[targetID].target;
-        for (var css_attr in TAH.cssAttrArray) {
-            if (TAH.dataOpt[targetID][css_attr + "Target"] && typeof (TAH.dataOpt[targetID][css_attr + "Target"]) == 'string')
-                TAH.dataOpt[targetID][css_attr + "Target"] = $(TAH.dataOpt[targetID][css_attr + "Target"])
-            TAH.dataOpt[targetID][css_attr + "Target"] = (TAH.dataOpt[targetID][css_attr + "Target"] && TAH.dataOpt[targetID][css_attr + "Target"].length != 0) ? TAH.dataOpt[targetID][css_attr + "Target"] : TAH.dataOpt[targetID].target
-        }
+            TAH.dataOpt[targetID] = $.extend(true, TAH.dataOpt[targetID], opt);
+            if (opt.request != null)
+                TAH.dataOpt[targetID].request = opt.request;
+            if (opt.reset != null)
+                TAH.dataOpt[targetID].reset = opt.reset;
+            if (opt.matchingValue != null)
+                TAH.dataOpt[targetID].matchingValue = opt.matchingValue;
+            if (opt.prepareParams != null)
+                TAH.dataOpt[targetID].prepareParams = opt.prepareParams;
+            TAH.dataOpt[targetID].prevValue = null;
+            TAH.dataOpt[targetID].prevValueID = "";
+            if (TAH.dataOpt[targetID].borderTarget && typeof (TAH.dataOpt[targetID].borderTarget) == 'string')
+                TAH.dataOpt[targetID].borderTarget = $(TAH.dataOpt[targetID].borderTarget)
+            if (TAH.dataOpt[targetID].widthTarget && typeof (TAH.dataOpt[targetID].widthTarget) == 'string')
+                TAH.dataOpt[targetID].widthTargett = $(TAH.dataOpt[targetID].widthTarget)
+            if (TAH.dataOpt[targetID].backgroundTarget && typeof (TAH.dataOpt[targetID].backgroundTarget) == 'string')
+                TAH.dataOpt[targetID].backgroundTarget = $(TAH.dataOpt[targetID].backgroundTarget)
+            TAH.dataOpt[targetID].borderTarget = (TAH.dataOpt[targetID].borderTarget && TAH.dataOpt[targetID].borderTarget.length != 0) ? TAH.dataOpt[targetID].borderTarget : TAH.dataOpt[targetID].target;
+            TAH.dataOpt[targetID].widthTarget = (TAH.dataOpt[targetID].widthTarget && TAH.dataOpt[targetID].widthTarget.length != 0) ? TAH.dataOpt[targetID].widthTarget : TAH.dataOpt[targetID].target;
+            for (var css_attr in TAH.cssAttrArray) {
+                if (TAH.dataOpt[targetID][css_attr + "Target"] && typeof (TAH.dataOpt[targetID][css_attr + "Target"]) == 'string')
+                    TAH.dataOpt[targetID][css_attr + "Target"] = $(TAH.dataOpt[targetID][css_attr + "Target"])
+                TAH.dataOpt[targetID][css_attr + "Target"] = (TAH.dataOpt[targetID][css_attr + "Target"] && TAH.dataOpt[targetID][css_attr + "Target"].length != 0) ? TAH.dataOpt[targetID][css_attr + "Target"] : TAH.dataOpt[targetID].target
+            }
+        })
     };
 }(jQuery));
